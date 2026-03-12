@@ -25,11 +25,14 @@ cp .env.example .env
 
 ## Variables de entorno
 
-| Variable   | Descripción                        | Default       |
-|------------|------------------------------------|---------------|
-| `PORT`     | Puerto del servidor HTTP           | `3000`        |
-| `NODE_ENV` | Entorno de ejecución               | `development` |
-| `WS_PATH`  | Ruta de conexión del WebSocket     | `/ws`         |
+| Variable               | Descripción                              | Default       |
+|------------------------|------------------------------------------|---------------|
+| `PORT`                 | Puerto del servidor HTTP                 | `3000`        |
+| `NODE_ENV`             | Entorno de ejecución                     | `development` |
+| `WS_PATH`              | Ruta de conexión del WebSocket           | `/ws`         |
+| `FIREBASE_PROJECT_ID`  | ID del proyecto en Firebase              | —             |
+| `FIREBASE_CLIENT_EMAIL`| Email de la cuenta de servicio Firebase  | —             |
+| `FIREBASE_PRIVATE_KEY` | Llave privada de la cuenta de servicio   | —             |
 
 ## Uso
 
@@ -67,7 +70,8 @@ src/
 ├── domain/            → Reglas de negocio puras (entidades, interfaces)
 ├── application/       → Casos de uso (orquestación del flujo)
 ├── infrastructure/    → Implementaciones técnicas
-│   ├── config/        → Configuración (entorno, CORS)
+│   ├── config/        → Configuración (entorno, CORS, Firebase)
+│   ├── database/      → Conexión y repositorio base de Firestore
 │   ├── server/        → Setup de Express
 │   └── websocket/     → Setup de Socket.IO
 ├── presentation/      → Capa de entrada
@@ -84,11 +88,25 @@ src/
 | **Infrastructure** | Base de datos, Express, Socket.IO, repositorios  |
 | **Presentation**   | Controladores, rutas y middlewares HTTP          |
 
+## Configuración de Firebase
+
+1. Ve a [Firebase Console](https://console.firebase.google.com/)
+2. Selecciona tu proyecto (o crea uno nuevo)
+3. Ve a **Configuración del proyecto** > **Cuentas de servicio**
+4. Haz clic en **Generar nueva clave privada**
+5. Del archivo JSON descargado, copia los valores a tu `.env`:
+   - `project_id` → `FIREBASE_PROJECT_ID`
+   - `client_email` → `FIREBASE_CLIENT_EMAIL`
+   - `private_key` → `FIREBASE_PRIVATE_KEY` (incluir comillas dobles)
+
+> **Importante:** Nunca subas el archivo de cuenta de servicio ni las credenciales al repositorio.
+
 ## Tech Stack
 
 - **Runtime:** Node.js
 - **HTTP:** Express 5
 - **WebSocket:** Socket.IO 4
+- **Base de datos:** Firebase Firestore
 - **Entorno:** dotenv
 
 ## Scripts
@@ -101,4 +119,4 @@ src/
 
 ## Licencia
 
-ISC
+Albo
