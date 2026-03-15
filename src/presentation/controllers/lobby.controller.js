@@ -34,7 +34,7 @@ const unirseALobby = async (req, res, next) => {
 /**
  * POST /api/lobby/ready
  * Marca a un usuario como listo dentro de su lobby.
- * Emite el evento LISTO por WebSocket a todos los clientes conectados.
+ * Emite el evento LISTO o BATTLE_START por WebSocket a todos los clientes conectados.
  */
 const marcarListo = async (req, res, next) => {
   try {
@@ -53,7 +53,11 @@ const marcarListo = async (req, res, next) => {
       nombreUsuario: username.trim(),
       idLobby: idLobby.trim(),
     });
-    obtenerIo().emit(EVENTO_WS.LISTO, { idLobby: idLobby.trim(), username: username.trim() });
+    if(resultado.datos.lobbyReady) {
+      obtenerIo().emit(EVENTO_WS.BATTLE_START, { idLobby: idLobby.trim(), username: username.trim() });
+    }else{
+      obtenerIo().emit(EVENTO_WS.LISTO, { idLobby: idLobby.trim(), username: username.trim() });
+    }
     return res.json(resultado);
   } catch (err) {
     return next(err);

@@ -1,6 +1,7 @@
 const lobbyRepositorio = require('../../infrastructure/database/lobby-repositorio');
 
 const ESTATUS_LISTO = 'listo';
+const LOBBY_ESTATUS_BATTLING = 'battling';
 
 /**
  * Busca al usuario dentro del array de usuarios del lobby y actualiza su estatus a "listo".
@@ -39,8 +40,13 @@ const ejecutarMarcarUsuarioListo = async ({ nombreUsuario, idLobby }) => {
     error.statusCode = 404;
     throw error;
   }
-  await lobbyRepositorio.actualizar(idLobby, { usuarios });
-  return { exito: true, datos: { idLobby, username: nombreUsuario } };
+  const lobbyReady = usuarios.filter(usuario => usuario.estatus === ESTATUS_LISTO).length === 2;
+
+  const cantidadUsuariosListos = usuarios.filter(usuario => usuario.estatus === ESTATUS_LISTO).length;
+  console.log('lobbyReady',cantidadUsuariosListos, usuarios);
+  const estatusLobby = lobbyReady ? LOBBY_ESTATUS_BATTLING : lobby.estatus;
+  await lobbyRepositorio.actualizar(idLobby, { usuarios,estatus: estatusLobby });
+  return { exito: true, datos: { idLobby, username: nombreUsuario, lobbyReady: lobbyReady }};
 };
 
 module.exports = ejecutarMarcarUsuarioListo;

@@ -9,6 +9,7 @@ const EVENTO_WS = {
   MENSAJE: 'mensaje',
   UNIRSE_LOBBY: 'join_lobby',
   LISTO: 'ready',
+  BATTLE_START: 'battle_start',
 };
 
 module.exports = EVENTO_WS;
