@@ -5,6 +5,7 @@ const configuracionFirebase = {
   idProyecto: process.env.FIREBASE_PROJECT_ID,
   correoCliente: process.env.FIREBASE_CLIENT_EMAIL,
   llavePrivada: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  idBaseDeDatos: process.env.FIREBASE_DATABASE_ID || '(default)',
 };
 
 /**

@@ -7,6 +7,8 @@ const EVENTO_WS = {
   DESCONEXION: 'disconnect',
   ERROR: 'error',
   MENSAJE: 'mensaje',
+  UNIRSE_LOBBY: 'join_lobby',
+  LISTO: 'ready',
 };
 
 module.exports = EVENTO_WS;
