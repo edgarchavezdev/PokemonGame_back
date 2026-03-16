@@ -42,8 +42,6 @@ const ejecutarMarcarUsuarioListo = async ({ nombreUsuario, idLobby }) => {
   }
   const lobbyReady = usuarios.filter(usuario => usuario.estatus === ESTATUS_LISTO).length === 2;
 
-  const cantidadUsuariosListos = usuarios.filter(usuario => usuario.estatus === ESTATUS_LISTO).length;
-  console.log('lobbyReady',cantidadUsuariosListos, usuarios);
   const estatusLobby = lobbyReady ? LOBBY_ESTATUS_BATTLING : lobby.estatus;
   await lobbyRepositorio.actualizar(idLobby, { usuarios,estatus: estatusLobby });
   return { exito: true, datos: { idLobby, username: nombreUsuario, lobbyReady: lobbyReady }};

@@ -1,6 +1,7 @@
 const ejecutarUnirseALobby = require('../../application/lobby/unirse-lobby.caso-uso');
 const ejecutarMarcarUsuarioListo = require('../../application/lobby/marcar-usuario-listo.caso-uso');
 const { obtenerIo } = require('../../infrastructure/websocket/io-instancia');
+const ejecutarIniciarBatalla = require('../../application/battle/iniciar-batalla.caso-uso');
 const EVENTO_WS = require('../../infrastructure/websocket/events/evento.enum');
 
 /**
@@ -54,7 +55,8 @@ const marcarListo = async (req, res, next) => {
       idLobby: idLobby.trim(),
     });
     if(resultado.datos.lobbyReady) {
-      obtenerIo().emit(EVENTO_WS.BATTLE_START, { idLobby: idLobby.trim(), username: username.trim() });
+      obtenerIo().emit(EVENTO_WS.LOBBY_READY, { idLobby: idLobby.trim(), username: username.trim() });
+      ejecutarIniciarBatalla({ idLobby: idLobby.trim() });
     }else{
       obtenerIo().emit(EVENTO_WS.LISTO, { idLobby: idLobby.trim(), username: username.trim() });
     }
