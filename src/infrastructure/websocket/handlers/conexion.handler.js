@@ -1,5 +1,5 @@
 const EVENTO_WS = require('../events/evento.enum');
-
+const manejarAttack = require('./attack.handler');
 
 /**
  * Maneja el ciclo de vida de una conexión WebSocket individual.
@@ -7,7 +7,6 @@ const EVENTO_WS = require('../events/evento.enum');
  */
 const manejarConexion = (socket) => {
   console.log(`[WS] Cliente conectado: ${socket.id}`);
-  
   socket.on(EVENTO_WS.MENSAJE, (datos) => {
     console.log(`[WS] Mensaje de ${socket.id}:`, datos);
     socket.emit(EVENTO_WS.MENSAJE, { recibido: true, datos });
@@ -18,7 +17,9 @@ const manejarConexion = (socket) => {
   socket.on(EVENTO_WS.ERROR, (err) => {
     console.error(`[WS] Error en socket ${socket.id}:`, err.message);
   });
-
+  socket.on(EVENTO_WS.ATTACK, (datos) => {
+    manejarAttack(socket, datos ?? {});
+  });
 };
 
 module.exports = manejarConexion;

@@ -45,6 +45,9 @@ const ejecutarIniciarBatalla = async ({ idLobby }) => {
       };
       list_usuarios.push(user);
   });
+  list_usuarios.forEach(usuario => {
+    usuario.pokemons[0].estatus = 'active';
+  });
   const batalla = {
     usuarios: list_usuarios,
     turno_actual: list_usuarios[0].pokemons[0].speed > list_usuarios[1].pokemons[0].speed ? list_usuarios[0].username : list_usuarios[1].username,
