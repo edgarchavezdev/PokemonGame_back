@@ -1,4 +1,5 @@
 const lobbyRepositorio = require('../../infrastructure/database/lobby-repositorio');
+const ejecutarRegistrarEventoLobby = require('./registrar-evento-lobby.caso-uso');
 
 const ESTATUS_ESPERANDO = 'waiting';
 const ESTATUS_COMPLETO = 'complete';
@@ -69,7 +70,8 @@ const asignarUsuarioEnLobby = async (lobby, nombreUsuario) => {
 const ejecutarUnirseALobby = async ({ nombreUsuario }) => {
   const lobby = await obtenerOCrearLobby();
   await asignarUsuarioEnLobby(lobby, nombreUsuario);
-  return { exito: true, datos: { idLobby: lobby.id,usuarios: lobby.usuarios } };
+  await ejecutarRegistrarEventoLobby({ idLobby: lobby.id, tipo: 'join', datos: { username: nombreUsuario } });
+  return { exito: true, datos: { idLobby: lobby.id, usuarios: lobby.usuarios } };
 };
 
 module.exports = ejecutarUnirseALobby;

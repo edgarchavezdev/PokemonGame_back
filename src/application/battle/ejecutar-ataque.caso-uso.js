@@ -1,6 +1,7 @@
 const lobbyRepositorio = require('../../infrastructure/database/lobby-repositorio');
 const { obtenerIo } = require('../../infrastructure/websocket/io-instancia');
 const EVENTO_WS = require('../../infrastructure/websocket/events/evento.enum');
+const ejecutarRegistrarEventoLobby = require('../lobby/registrar-evento-lobby.caso-uso');
 
 /**
  * Construye un payload seguro para emitir por Socket.IO (solo datos serializables a JSON).
@@ -49,6 +50,7 @@ const ejecutarAtaque = async (datos) => {
 
   let mensaje = `${atacante.name} ha atacado a ${defensor.name} y le ha infligido ${damage} puntos de daño.`;
   io.emit(EVENTO_WS.ATTACK_RESULT, payloadSerializable({ idLobby, mensaje, username, atacante: atacante.name, defensor: { username: user_defensor.username, name: defensor.name, currentHP: currentHP_defensor } }));
+  await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'attack', datos: { username, atacante: atacante.name, defensor: defensor.name, damage, currentHP_defensor } });
 
   await new Promise(resolve => setTimeout(resolve, 2000));
 
@@ -58,7 +60,8 @@ const ejecutarAtaque = async (datos) => {
         //se gana la batalla
         let mensaje = `La batalla ha terminado y ha ganado ${user_atacante.username}`;
         io.emit(EVENTO_WS.BATTLE_RESULT, payloadSerializable({ idLobby, mensaje, username }));
-        await lobbyRepositorio.actualizar(idLobby, { estatus: 'finished',ganador: user_atacante.username });
+        await lobbyRepositorio.actualizar(idLobby, { estatus: 'finished', ganador: user_atacante.username });
+        await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'battle_result', datos: { ganador: user_atacante.username, mensaje } });
       }else{
         let next_pokemon = user_defensor.pokemons.filter(pokemon => pokemon.estatus === 'pending')[0];
         next_pokemon.estatus = 'active';
@@ -66,12 +69,15 @@ const ejecutarAtaque = async (datos) => {
         await lobbyRepositorio.actualizar(idLobby, { batalla: datos_battalla });
         
         io.emit(EVENTO_WS.POKEMON_CHANGE, payloadSerializable({ idLobby, username: user_defensor.username ?? '', new_pokemon: next_pokemon.name ?? '', old_pokemon: defensor.name ?? '' }));
+        await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'pokemon_change', datos: { username: user_defensor.username, new_pokemon: next_pokemon.name, old_pokemon: defensor.name } });
         mensaje = `Es el turno de ${user_defensor.username}`;
-        io.emit(EVENTO_WS.TURN_CHANGE, payloadSerializable({ idLobby, mensaje ,username: user_defensor.username ?? ''}));
+        io.emit(EVENTO_WS.TURN_CHANGE, payloadSerializable({ idLobby, mensaje, username: user_defensor.username ?? '' }));
+        await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'turn_change', datos: { username: user_defensor.username, mensaje } });
       }
-  }else{
+  } else {
     mensaje = `Es el turno de ${user_defensor.username}`;
     io.emit(EVENTO_WS.TURN_CHANGE, payloadSerializable({ idLobby, mensaje, username: user_defensor.username ?? '' }));
+    await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'turn_change', datos: { username: user_defensor.username, mensaje } });
   }
 
 };

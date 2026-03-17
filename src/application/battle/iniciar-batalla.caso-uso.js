@@ -1,5 +1,6 @@
 const lobbyRepositorio = require('../../infrastructure/database/lobby-repositorio');
 const pokemonApiCliente = require('../../infrastructure/http/pokemon-api.cliente');
+const ejecutarRegistrarEventoLobby = require('../lobby/registrar-evento-lobby.caso-uso');
 const { obtenerIo } = require('../../infrastructure/websocket/io-instancia');
 const EVENTO_WS = require('../../infrastructure/websocket/events/evento.enum');
 
@@ -59,6 +60,7 @@ const ejecutarIniciarBatalla = async ({ idLobby }) => {
   });
   const payload = { idLobby, batalla };
   obtenerIo().emit(EVENTO_WS.BATTLE_START, payload);
+  await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'battle_start', datos: { turno_actual: batalla.turno_actual, estatus: batalla.estatus } });
 };
 
 /**

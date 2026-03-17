@@ -1,4 +1,5 @@
 const lobbyRepositorio = require('../../infrastructure/database/lobby-repositorio');
+const ejecutarRegistrarEventoLobby = require('./registrar-evento-lobby.caso-uso');
 
 const ESTATUS_LISTO = 'listo';
 const LOBBY_ESTATUS_BATTLING = 'battling';
@@ -43,8 +44,9 @@ const ejecutarMarcarUsuarioListo = async ({ nombreUsuario, idLobby }) => {
   const lobbyReady = usuarios.filter(usuario => usuario.estatus === ESTATUS_LISTO).length === 2;
 
   const estatusLobby = lobbyReady ? LOBBY_ESTATUS_BATTLING : lobby.estatus;
-  await lobbyRepositorio.actualizar(idLobby, { usuarios,estatus: estatusLobby });
-  return { exito: true, datos: { idLobby, username: nombreUsuario, lobbyReady: lobbyReady }};
+  await lobbyRepositorio.actualizar(idLobby, { usuarios, estatus: estatusLobby });
+  await ejecutarRegistrarEventoLobby({ idLobby, tipo: 'ready', datos: { username: nombreUsuario, lobbyReady } });
+  return { exito: true, datos: { idLobby, username: nombreUsuario, lobbyReady } };
 };
 
 module.exports = ejecutarMarcarUsuarioListo;
