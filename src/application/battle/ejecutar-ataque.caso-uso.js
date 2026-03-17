@@ -65,7 +65,6 @@ const ejecutarAtaque = async (datos) => {
         await lobbyRepositorio.actualizar(idLobby, { batalla: datos_battalla });
         
         io.emit(EVENTO_WS.POKEMON_CHANGE, payloadSerializable({ idLobby, username: user_defensor.username ?? '', new_pokemon: next_pokemon.name ?? '', old_pokemon: defensor.name ?? '' }));
-        await new Promise(resolve => setTimeout(resolve, 2000));
         mensaje = `Es el turno de ${user_defensor.username}`;
         io.emit(EVENTO_WS.TURN_CHANGE, payloadSerializable({ idLobby, mensaje ,username: user_defensor.username ?? ''}));
       }
