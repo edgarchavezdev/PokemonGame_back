@@ -58,6 +58,7 @@ const ejecutarAtaque = async (datos) => {
         //se gana la batalla
         let mensaje = `La batalla ha terminado y ha ganado ${user_atacante.username}`;
         io.emit(EVENTO_WS.BATTLE_RESULT, payloadSerializable({ idLobby, mensaje, username }));
+        await lobbyRepositorio.actualizar(idLobby, { estatus: 'finished',ganador: user_atacante.username });
       }else{
         let next_pokemon = user_defensor.pokemons.filter(pokemon => pokemon.estatus === 'pending')[0];
         next_pokemon.estatus = 'active';
